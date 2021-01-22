@@ -1,17 +1,4 @@
-﻿  Lab1 DDL.cpp
-c:\projects\avancerad c++\da278avanceradcpp\lab1 ddl\lab1 ddl\lab1 ddl.cpp(7): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
-c:\projects\avancerad c++\da278avanceradcpp\lab1 ddl\lab1 ddl\lab1 ddl.cpp(9): error C2059: syntax error: 'public'
-c:\projects\avancerad c++\da278avanceradcpp\lab1 ddl\lab1 ddl\lab1 ddl.cpp(11): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
-c:\projects\avancerad c++\da278avanceradcpp\lab1 ddl\lab1 ddl\lab1 ddl.cpp(11): error C2365: 'Base': redefinition; previous definition was 'data variable'
-  c:\projects\avancerad c++\da278avanceradcpp\lab1 ddl\lab1 ddl\lab1 ddl.cpp(6): note: see declaration of 'Base'
-c:\projects\avancerad c++\da278avanceradcpp\lab1 ddl\lab1 ddl\lab1 ddl.cpp(12): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
-c:\projects\avancerad c++\da278avanceradcpp\lab1 ddl\lab1 ddl\lab1 ddl.cpp(12): error C2365: 'Base': redefinition; previous definition was 'data variable'
-  c:\projects\avancerad c++\da278avanceradcpp\lab1 ddl\lab1 ddl\lab1 ddl.cpp(6): note: see declaration of 'Base'
-c:\projects\avancerad c++\da278avanceradcpp\lab1 ddl\lab1 ddl\lab1 ddl.cpp(12): error C2550: 'Base': constructor initializer lists are only allowed on constructor definitions
-c:\projects\avancerad c++\da278avanceradcpp\lab1 ddl\lab1 ddl\lab1 ddl.cpp(15): error C2059: syntax error: '}'
-c:\projects\avancerad c++\da278avanceradcpp\lab1 ddl\lab1 ddl\lab1 ddl.cpp(15): error C2143: syntax error: missing ';' before '}'
-c:\projects\avancerad c++\da278avanceradcpp\lab1 ddl\lab1 ddl\lab1 ddl.cpp(19): error C2064: term does not evaluate to a function taking 1 arguments
-c:\projects\avancerad c++\da278avanceradcpp\lab1 ddl\lab1 ddl\lab1 ddl.cpp(20): error C2146: syntax error: missing ';' before identifier 'b'
-c:\projects\avancerad c++\da278avanceradcpp\lab1 ddl\lab1 ddl\lab1 ddl.cpp(20): error C2065: 'b': undeclared identifier
-c:\projects\avancerad c++\da278avanceradcpp\lab1 ddl\lab1 ddl\lab1 ddl.cpp(21): error C2065: 'b': undeclared identifier
-c:\projects\avancerad c++\da278avanceradcpp\lab1 ddl\lab1 ddl\lab1 ddl.cpp(22): error C2065: 'b': undeclared identifier
+﻿  ListBasicTest.cpp
+  Lab1 DDL.cpp
+  Generating Code...
+  Lab1 DDL.vcxproj -> C:\Projects\Avancerad C++\DA278AvanceradCPP\Lab1 DDL\Debug\Lab1 DDL.exe

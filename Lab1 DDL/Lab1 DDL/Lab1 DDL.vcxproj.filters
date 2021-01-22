@@ -18,12 +18,24 @@
     <ClCompile Include="Lab1 DDL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dll.cpp">
+    <ClCompile Include="DLLTest\ListBasicTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DLLTest\ListIterTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DLLTest\ListTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="dll.h">
+    <ClInclude Include="Flist.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DLLTest\TestLevel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="List.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

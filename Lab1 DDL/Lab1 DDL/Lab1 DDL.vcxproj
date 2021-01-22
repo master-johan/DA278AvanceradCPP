@@ -151,11 +151,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="dll.cpp" />
+    <ClCompile Include="DLLTest\ListBasicTest.cpp" />
+    <ClCompile Include="DLLTest\ListIterTest.cpp" />
+    <ClCompile Include="DLLTest\ListTest.cpp" />
     <ClCompile Include="Lab1 DDL.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="dll.h" />
+    <ClInclude Include="List.hpp" />
+    <ClInclude Include="DLLTest\TestLevel.h" />
+    <ClInclude Include="Flist.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
