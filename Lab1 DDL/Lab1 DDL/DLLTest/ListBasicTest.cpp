@@ -6,6 +6,15 @@
 //Man behöver kunna se att listan har rätt innehåll
 //Därför så har vi två testfunktioner
 
+#ifdef _DEBUG
+#ifndef DBG_NEW
+#include <stdlib.h>
+#include <crtdbg.h>
+#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+#define new DBG_NEW
+#endif
+#endif  // _DEBUG
+
 #include <cassert>
 #include <iostream>
 using std::cout;
@@ -13,6 +22,7 @@ using std::cout;
 #include "TestLevel.h"
 
 #include "../List.hpp"
+#include "../Flist.hpp"
 
 struct C { int i; };
 
@@ -26,18 +36,27 @@ void TestBasic() {
 #endif
 #if LEVEL>=2
     {
+#if 0 // 1 for test on Flist, 0 for test on List
+        Flist<char> foo("foo");
+        //assert(foo.size() == 3);
+        //foo.Print(cout);
+        assert(foo == foo);
+        Flist<char> bar("bar");
+        assert(!(foo == bar));
+#else
         List<char> foo("foo");
         assert(foo.Count() == 3);
-        foo.Print(cout);;
+        foo.Print(cout);
         assert(foo == foo);
         List<char> bar("bar");
         assert(!(foo == bar));
+#endif
     }
 #endif
 #if LEVEL>=3
     {
         List<char> foo("foo"), bar("bar");
-        assert(foo == foo && foo != foo);
+        assert(foo == foo && !(foo != foo));
         assert(bar < foo && !(bar > foo));
         assert(bar <= foo && !(bar >= foo));
         assert(bar <= bar && foo >= foo);
@@ -49,7 +68,7 @@ void TestBasic() {
     {
         List<char> foo("foo"), bar("bar");
         List<char> foo2(foo);
-        assert(foo2.Invariant() && foo2.Count() == 2);
+        assert(foo2.Invariant() && foo2.Count() == 3);
         assert(foo == foo2);
     }
 #endif
@@ -58,8 +77,7 @@ void TestBasic() {
         List<char> foo("foo"), bar("");
         assert(!foo.empty() && bar.empty());
 
-        const        List<char> bar2(bar);
-        assert(bar.front() == 'b' && bar.back() == 'r');
+        const        List<char> bar2("bar");
         assert(bar2.front() == 'b' && bar2.back() == 'r');
     }
 #endif

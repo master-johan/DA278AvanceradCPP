@@ -16,6 +16,11 @@ using Cont = List<char>; //Ersätt List med vad er lista heter
 using  Iter = Cont::iterator;
 using  CIter = Cont::const_iterator;
 
+#define FOX List<char> Fox("Fox");
+#define FOX0 List<char> Fox;
+#define BAR List<char> Bar("Bar");
+#define BAR0 List<char> Bar;
+
 #include <cassert>
 #include <string>
 
@@ -31,10 +36,9 @@ bool IsConstOrConstRefFun(T& x) {
     return std::is_const<std::remove_reference<T>::type>::value;
 };
 
-
-
-
 void TestIterRel(); //Längst ner
+
+void TestSpliceAndSwap(); // Längst ner
 
 void TestList() {
     {
@@ -210,31 +214,7 @@ void TestList() {
         assert(IsConstOrConstRefFun(BarC.back()));
     }
 
-#ifdef VG
-    {
-        List<char> Foo("Foo");
-        List<char> Bar("Bar");
-        swap(Foo, Bar);
-        assert(Foo.Invariant());
-        assert(Bar.Invariant());
-        assert(Foo == "Bar" && Bar == "Foo");
-        swap(Foo, Bar);
-        assert(Foo == "Foo" && Bar == "Bar");
-        Bar = "";
-        assert(Foo == "Foo" && Bar == "");
-        swap(Foo, Bar);
-        assert(Foo.Invariant());
-        assert(Bar.Invariant());
-        assert(Foo == "");
-        assert(Bar == "Foo");
-        assert(Foo == "" && Bar == "Foo");
-        swap(Foo, Bar);
-        assert(Foo == "Foo" && Bar == "");
-        Foo = "";
-        swap(Foo, Bar);
-        assert(Foo == "" && Bar == "");
-    }
-#endif VG
+    TestSpliceAndSwap();
     TestIterRel();
 }
 
@@ -278,6 +258,114 @@ void TestIterRel() {
     //assert(vecAbcdefg == "Abcdef");
 }
 
+#ifdef VG
+void TestSpliceAndSwap()
+{
+    {
+        FOX BAR;
+        swap(Fox, Bar);
+        assert(Fox.Invariant());
+        assert(Bar.Invariant());
+        assert(Fox == "Bar" && Bar == "Fox");
+        swap(Fox, Bar);
+        assert(Fox == "Fox" && Bar == "Bar");
+    }
+    {
+        FOX BAR0;
+        swap(Fox, Bar);
+        assert(Fox.Invariant());
+        assert(Bar.Invariant());
+        assert(Fox == "" && Bar == "Fox");
+        swap(Fox, Bar);
+        assert(Fox == "Fox" && Bar == "");
+    }
+    {
+        FOX0 BAR;
+        swap(Fox, Bar);
+        assert(Fox.Invariant());
+        assert(Bar.Invariant());
+        assert(Fox == "Bar" && Bar == "");
+        swap(Fox, Bar);
+        assert(Fox == "" && Bar == "Bar");
+    }
+    {
+        FOX0 BAR0;
+        swap(Fox, Bar);
+        assert(Fox.Invariant());
+        assert(Bar.Invariant());
+        assert(Fox == "" && Bar == "");
+        swap(Fox, Bar);
+        assert(Fox == "" && Bar == "");
+    }
+
+    //Test Splice:
+    //this (List)
+    //can be empty or nonempty
+    //Pos can be first, middle or end
+    //Gives 4 cases
+    //
+    //other can be
+    //empty or non empty
+    //range to insert
+    //from an empty, nonempty list
+    //can be empty, one, more
+    //can start at first or middle
+    //can end at middle, end
+    //gives 1+1+2*2=6
+    //Testing 24 cases are to much!
+    //We test:
+    //with List empty:
+    //       other empty range or nonempty range
+    //with nonmepty List (3 Nodes)
+    //     empty other
+    //     one other, insert this
+    //     3 in other list
+    //         insert [1,4)
+    //         insert [1,3)
+    //         insert [1,1)
+    //         insert [2,3)
+    //         insert [2,4)
+    //OBS jag har inte orkat skriva in alla testcasen som jag föreslår ovan!
+    {
+        FOX0 BAR0;
+        Fox.splice(Fox.begin(), Bar, Bar.begin(), Bar.end());
+        assert(Fox == "" && Bar == "");
+    }
+    {
+        FOX0 BAR;
+        Fox.splice(Fox.begin(), Bar, Bar.begin(), Bar.begin());
+        Fox.splice(Fox.begin(), Bar, ++Bar.begin(), ++Bar.begin());
+        assert(Fox == "" && Bar == "Bar");
+    }
+    {
+        FOX0 BAR;
+        Fox.splice(Fox.begin(), Bar, Bar.begin(), ++Bar.begin());
+        assert(Fox == "B" && Bar == "ar");
+    }
+    {
+        FOX0 BAR;
+        Fox.splice(Fox.begin(), Bar, --Bar.end(), Bar.end());
+        assert(Fox == "r" && Bar == "Ba");
+    }
+    {
+        FOX BAR;
+        Fox.splice(Fox.begin(), Bar, Bar.end(), Bar.end());
+        assert(Fox == "Fox" && Bar == "Bar");
+    }
+    {
+        FOX BAR;
+        Fox.splice(++Fox.begin(), Bar, --Bar.end(), Bar.end());
+        assert(Fox == "Frox" && Bar == "Ba");
+    }
+    {
+        FOX BAR;
+        Fox.splice(Fox.end(), Bar, Bar.begin(), ++Bar.begin());
+        assert(Fox == "FoxB" && Bar == "ar");
+    }
+}
+
+
+#endif VG
 
 void XXX() {
     List<char> a("xyz");

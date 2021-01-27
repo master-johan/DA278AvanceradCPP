@@ -29,7 +29,8 @@ int main() {
 
 	TestBasic();
 	TestList();
-	//TestListIter();
+	TestListIter();
+	new int(7);
 	std::cout << "There should be one memory leak!";
 	std::cin.get();
 
