@@ -5,6 +5,7 @@ template <class T>
 class List
 {
 	class Node;		// forward decleration
+	 
 
 	class Link
 	{
@@ -13,11 +14,21 @@ class List
 		Link* _prev;
 		Link() : _next(this), _prev(this) {}
 	public:
-		void InsertAfter(Node* toInsert)
+		void InsertFirst(Node* toInsert)
 		{
 			toInsert->_next = _next;
 			toInsert->_prev = this;
-			_next = toInsert;
+			_next->_prev = toInsert;
+			_next = toInsert; 
+		}
+
+		void InsertLast(Node* toInsert)
+		{
+			toInsert->_next = this;
+			toInsert->_prev = _prev;
+			_prev->_next = toInsert;
+			_prev = toInsert;
+
 		}
 
 		//Node* DeleteAfter()
@@ -94,18 +105,31 @@ public:
 	using iterator = ListIter<T>;
 	using const_iterator = ListIter<const T>;
 
-	//~Link();
+	//~Link()
+	//{
 
+	//}
+	List()
+	{
+		_head._next = &_head;
+		_head._prev = &_head;
+		CHECK
+	}
 	//List(const List& other);
 	List(const char* other) : List()
 	{
 	
 		const char* ptr = other;
 		while (*ptr != '\0')
+		{
+			push_back(*ptr);
 			++ptr;
-		--ptr;
-		for (; ptr >= other; --ptr)
-			push_front(*ptr);
+		}
+		//while (*ptr != '\0')
+		//	++ptr;
+		//--ptr;
+		//for (; ptr >= other; --ptr)
+		//	push_front(*ptr);
 		CHECK
 	}
 
@@ -125,11 +149,16 @@ public:
 	//iterator insert(iterator post, const T& value);
 	//iterator eratse(const iterator& pos);
 
-	//void push_back(const T& value);
+	void push_back(const T& toInsert)
+	{
+		Node* node = new Node(toInsert);
+		_head.InsertLast(node);
+
+	}
 	void push_front(const T& toInsert)
 	{
 		Node* node = new Node(toInsert);
-		_head.InsertAfter(node);
+		_head.InsertFirst(node);
 	}
 
 	//void pop_back();
@@ -195,11 +224,7 @@ public:
 		return count;
 	}
 
-	List()
-	{
-		_head._next = &_head;
-		_head._prev = &_head;
-	}
+	
 
 
 
@@ -209,14 +234,18 @@ public:
 		{
 			if (++i == std::numeric_limits<size_t>::max())
 				return false;
+			if (ptr->_next->_prev != ptr)
+				return false;
+
 		}
+
 		return true;
 	}
 
 
 	iterator begin() { return iterator(_head._next); }
 	const_iterator begin() const { return const_iterator(_head._next); }
-	iterator end() { return iterator(_head); }
+	iterator end() { return iterator(&_head); }
 	const_iterator end() const { return const_iterator(&_head); }
 
 };
