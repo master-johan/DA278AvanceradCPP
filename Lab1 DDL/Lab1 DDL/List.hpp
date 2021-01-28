@@ -1,11 +1,13 @@
 #pragma once
-
+#include <cstdlib>
+#include <ostream>
+#include <cassert>
 #define CHECK assert(Invariant());
 template <class T>
 class List
 {
 	class Node;		// forward decleration
-	 
+
 
 	class Link
 	{
@@ -14,15 +16,15 @@ class List
 		Link* _prev;
 		Link() : _next(this), _prev(this) {}
 	public:
-		void InsertFirst(Node* toInsert)
+		void InsertBefore(Node* toInsert)
 		{
 			toInsert->_next = _next;
 			toInsert->_prev = this;
 			_next->_prev = toInsert;
-			_next = toInsert; 
+			_next = toInsert;
 		}
 
-		void InsertLast(Node* toInsert)
+		void InsertAfter(Node* toInsert)
 		{
 			toInsert->_next = this;
 			toInsert->_prev = _prev;
@@ -31,12 +33,21 @@ class List
 
 		}
 
-		//Node* DeleteAfter()
-		//{
-		//	Link* temp = _next;
-		//	_next = next->_next;
-		//	return static_cast<Node*>(temp);
-		//}
+		Node* DeleteFirst()
+		{
+			Link* temp = _next;
+			_next = _next->_next;
+			_next->_prev = this;
+			return static_cast<Node*>(temp);
+		}
+
+		Node* DeleteLast()
+		{
+			Link* temp = _prev;
+			_prev = _prev->_prev;
+			_prev->_next = this;
+			return static_cast<Node*>(temp);
+		}
 
 	};
 
@@ -50,7 +61,7 @@ class List
 
 	};
 
-	template<class X>   // kan det vara samma om på rad 2?
+	template<class X>   
 	class ListIter
 	{
 		friend class List<T>;
@@ -63,34 +74,43 @@ class List
 		using reference = X&;
 		using pointer = X*;
 
-		ListIter()
-		{
-			_ptr = nullptr;
-		}
+		ListIter(const Link* p = nullptr) : _ptr(static_cast<Node*>(const_cast<Link*>(p))) {}
 
-		ListIter(const Link* p = nullptr) : _ptr(static_cast<Node*>(const_cast<Link*>(p))){}
-
-		ListIter(const ListIter& other)
-		{
-			_ptr = other._ptr;
-		}
-		//ListIter& operatror=(const ListIter& other);
+		ListIter(const ListIter&) = default;
+	
+		ListIter& operator= (const ListIter & other) = default;
+	
+		
 		X& operator*()
 		{
 			return _ptr->_data;
 		}
 		X* operator->()
 		{
-			return &_ptr->data;
+			return &_ptr->_data;
 		}
 		ListIter& operator++()
 		{
 			_ptr = static_cast<Node*>(_ptr->_next);
 			return *this;
 		}
-		//ListIter& operator--();
-		//ListIter operator++(int);
-		//ListIter operator--(int);
+		ListIter& operator--()
+		{
+			_ptr = static_cast<Node*>(_ptr->_prev);
+			return *this;
+		}
+		ListIter operator++(int)
+		{
+			auto temp(*this);
+			operator++();
+			return temp;
+		}
+		ListIter operator--(int)
+		{
+			auto temp(*this);
+			operator--();
+			return temp;
+		}
 
 		friend bool operator == (const ListIter& lhs, const ListIter& rhs) = default;
 
@@ -105,87 +125,229 @@ public:
 	using iterator = ListIter<T>;
 	using const_iterator = ListIter<const T>;
 
-	//~Link()
-	//{
+	~List()
+	{
+		while (_head._next != &_head)
+		{
+			pop_front();
+		}
+		CHECK
+	}
 
-	//}
 	List()
 	{
 		_head._next = &_head;
 		_head._prev = &_head;
 		CHECK
 	}
-	//List(const List& other);
+
+	List(const List& other) : List()
+	{
+		if (other.Count() > 0)
+		{
+			Link* ptr = other._head._next;
+			while (ptr != &other._head)
+			{
+				push_back(static_cast<Node*>(ptr)->_data);
+				ptr = ptr->_next;
+			}
+		}
+		CHECK
+	}
+
 	List(const char* other) : List()
 	{
-	
 		const char* ptr = other;
 		while (*ptr != '\0')
 		{
 			push_back(*ptr);
 			++ptr;
 		}
-		//while (*ptr != '\0')
-		//	++ptr;
-		//--ptr;
-		//for (; ptr >= other; --ptr)
-		//	push_front(*ptr);
 		CHECK
 	}
 
+	T& front()
+	{
+		return static_cast<Node*>(_head._next)->_data;
+	}
+	const T& front() const
+	{
+		return static_cast<Node*>(_head._next)->_data;
+	}
 
-	//const T& front() const;
-	//T& front();
+	T& back()
+	{
+		return static_cast<Node*>(_head._prev)->_data;
+	}
+	const T& back() const
+	{
+		return static_cast<Node*>(_head._prev)->_data;
+	}
 
-	//const T& back() const;
-	//T& back();
+	bool empty() const noexcept
+	{
+		return begin() == end();
+	}
 
-	//iterator begin() noexcept;
-	//iterator end() noexcept;
+	size_t size() const noexcept 
+	{
+		return std::distance(cbegin(), cend());
+	}
 
-	//bool empty() const noexcept;
-	//size_t size() const noexcept;
+	iterator insert(iterator pos, const T& value)
+	{
+		pos._ptr->InsertAfter(new Node(value));
+		return pos._ptr->_prev;
+	}
+	
+	iterator erase(const iterator& pos) 
+	{
+		iterator temp = pos;
+		++temp;
 
-	//iterator insert(iterator post, const T& value);
-	//iterator eratse(const iterator& pos);
+		pos._ptr->_prev->_next = pos._ptr->_next;
+		pos._ptr->_next->_prev = pos._ptr->_prev;
+
+
+		delete pos._ptr;
+		CHECK
+		return temp;
+	}
 
 	void push_back(const T& toInsert)
 	{
 		Node* node = new Node(toInsert);
-		_head.InsertLast(node);
+		_head.InsertAfter(node);
 
 	}
 	void push_front(const T& toInsert)
 	{
 		Node* node = new Node(toInsert);
-		_head.InsertFirst(node);
+		_head.InsertBefore(node);
 	}
 
-	//void pop_back();
-	//void pop_front();
+	void pop_back()
+	{
+		delete _head.DeleteLast();
+		CHECK
+	}
+	void pop_front()
+	{
+		delete _head.DeleteFirst();
+		CHECK
+	}
 
-	//operator=(const List& other); // VG
-	//void swap(List<T>&rhs); // VG
-	//void splice(const_iterator pos, List& other, const_iterator first, const_iterator last); // VG
-	//friend void swap(List<T>& lhs, List < T& rhs); // VG
+	List& operator=(const List& other) // VG
+	{
+		List newList(other);
+		swap(newList);
+		return *this;
+	}
+	void splice(const_iterator pos, List& other, const_iterator first, const_iterator last) // VG
+	{
+		bool thisEmpty = empty();
+		bool otherEmpty = other.empty();
+		if (thisEmpty&& otherEmpty)
+		{
+			
+		}
+		else if (thisEmpty)
+		{
+			first._ptr->_prev->_next = last._ptr->_next;
+			last._ptr->_next->_prev = first._ptr->_prev;
+
+			pos._ptr->_next = first._ptr;
+			first._ptr->_prev = pos._ptr;
+			pos._ptr->_prev = last._ptr;
+			last._ptr->_next = pos._ptr;
+		}
+		else if (otherEmpty)
+		{
+
+		}
+		else
+		{
+			first._ptr->_prev->_next = last._ptr->_next->_prev;
+			last._ptr->_next->_prev = first._ptr->_prev->_next;
+
+			pos._ptr->_prev->_next = first._ptr;
+			first._ptr->_prev = pos._ptr->_prev;
+			last._ptr->_next = pos._ptr;
+			pos._ptr->_prev = last._ptr;
+
+		}
+		
+		CHECK
+	}
+	void swap(List<T>& rhs)// VG
+	{
+		bool thisEmpty = empty();
+		bool rhsEmpty = rhs.empty();
+
+		if (thisEmpty && rhsEmpty)
+		{
+			return;
+		}
+		else if (thisEmpty)
+		{
+			_head._next = rhs._head._next;
+			_head._next->_prev = &_head;
+			_head._prev = rhs._head._prev;
+			_head._prev->_next = &_head;
+
+			rhs._head._next = &rhs._head;
+			rhs._head._prev = &rhs._head;
+		}
+		else if (rhsEmpty)
+		{
+			rhs._head._next = _head._next;
+			rhs._head._next->_prev = &rhs._head;
+			rhs._head._prev = _head._prev;
+			rhs._head._prev->_next = &rhs._head;
+			_head._next = &_head;
+			_head._prev = &_head;
+		}
+		else
+		{
+			Link* temp1 = _head._next;
+			Link* temp2 = _head._prev;
+
+			_head._next = rhs._head._next;
+			_head._next->_prev = &_head;
+			_head._prev = rhs._head._prev;
+			_head._prev->_next = &_head;
+
+			rhs._head._next = temp1;
+			rhs._head._next->_prev = &rhs._head;
+			rhs._head._prev = temp2;
+			rhs._head._prev->_next = &rhs._head;
+		}
+
+		CHECK
+	}
+
+	friend void swap(List<T>& lhs, List<T>& rhs) // VG
+	{
+		lhs.swap(rhs);
+	}
 
 	friend auto operator<=> (const List& lhs, const List& rhs)
-	{																	  
-		auto lIt = lhs.begin();											  
-		auto rIt = rhs.begin();											  
-																		  
-		for (; lIt != lhs.end() && rIt != rhs.end(); ++lIt, ++rIt)		  
-			if (*lIt < *rIt)											  
+	{
+		auto lIt = lhs.begin();
+		auto rIt = rhs.begin();
+
+		for (; lIt != lhs.end() && rIt != rhs.end(); ++lIt, ++rIt)
+			if (*lIt < *rIt)
 				return std::strong_ordering::less;
 			else if (*lIt > *rIt)
-				return std::strong_ordering::greater;				   
-		if (lIt == lhs.end())										   
-			if (rIt == rhs.end())									   
-				return std::strong_ordering::equivalent;			   
-			else													   
-				return std::strong_ordering::less;					   
-		else														   
-			return std::strong_ordering::greater;					   
+				return std::strong_ordering::greater;
+		if (lIt == lhs.end())
+			if (rIt == rhs.end())
+				return std::strong_ordering::equivalent;
+			else
+				return std::strong_ordering::less;
+		else
+			return std::strong_ordering::greater;
 
 	}
 
@@ -198,9 +360,16 @@ public:
 	{
 		return (lhs <=> rhs) != 0;
 	}
-	//friend bool operator< (const List& lhs, const List& other);
 
-	//friend std::ostream& operator<<(std::ostream& cout, const List& other);
+	friend std::ostream& operator<<(std::ostream& cout, const List& other)
+	{
+		for (auto it = other.begin(); it != other.end(); ++it)
+		{
+			cout << *it << " ";
+		}
+		cout << std::endl;
+		return cout;
+	}
 
 	std::ostream& Print(std::ostream& cout)
 	{
@@ -212,8 +381,6 @@ public:
 		return cout;
 	}
 
-
-
 	size_t Count() const
 	{
 		size_t count = 0;
@@ -223,10 +390,6 @@ public:
 		}
 		return count;
 	}
-
-	
-
-
 
 	bool Invariant() const {
 		size_t i = 0;
@@ -242,10 +405,11 @@ public:
 		return true;
 	}
 
-
 	iterator begin() { return iterator(_head._next); }
 	const_iterator begin() const { return const_iterator(_head._next); }
+	const_iterator cbegin() const { return const_iterator(_head._next); }
 	iterator end() { return iterator(&_head); }
 	const_iterator end() const { return const_iterator(&_head); }
+	const_iterator cend() const { return const_iterator(&_head); }
 
 };

@@ -10,7 +10,7 @@
 
 #if (defined(LEVEL)  && (LEVEL>20) ||  !defined(LEVEL))   && (defined(VG) || defined(G))
 
-#include "List.hpp"
+#include "..//List.hpp"
 
 using Cont = List<char>; //Ersätt List med vad er lista heter
 using  Iter = Cont::iterator;
@@ -23,6 +23,7 @@ using  CIter = Cont::const_iterator;
 
 #include <cassert>
 #include <string>
+#include <iostream>
 
 using std::cout;
 
@@ -326,40 +327,43 @@ void TestSpliceAndSwap()
     //         insert [2,3)
     //         insert [2,4)
     //OBS jag har inte orkat skriva in alla testcasen som jag föreslår ovan!
+
     {
         FOX0 BAR0;
-        Fox.splice(Fox.begin(), Bar, Bar.begin(), Bar.end());
+        Fox.splice(Fox.cbegin(), Bar, Bar.cbegin(), Bar.cend());
         assert(Fox == "" && Bar == "");
     }
     {
         FOX0 BAR;
-        Fox.splice(Fox.begin(), Bar, Bar.begin(), Bar.begin());
-        Fox.splice(Fox.begin(), Bar, ++Bar.begin(), ++Bar.begin());
+        Fox.splice(Fox.cbegin(), Bar, Bar.cbegin(), Bar.cbegin());
+        cout << Fox << " " << Bar << "first done" << std::endl;
+        Fox.splice(Fox.cbegin(), Bar, ++Bar.cbegin(), ++Bar.cbegin());
+        cout << Fox << " " << Bar << std::endl;
         assert(Fox == "" && Bar == "Bar");
     }
     {
         FOX0 BAR;
-        Fox.splice(Fox.begin(), Bar, Bar.begin(), ++Bar.begin());
+        Fox.splice(Fox.cbegin(), Bar, Bar.cbegin(), ++Bar.cbegin());
         assert(Fox == "B" && Bar == "ar");
     }
     {
         FOX0 BAR;
-        Fox.splice(Fox.begin(), Bar, --Bar.end(), Bar.end());
+        Fox.splice(Fox.cbegin(), Bar, --Bar.cend(), Bar.cend());
         assert(Fox == "r" && Bar == "Ba");
     }
     {
         FOX BAR;
-        Fox.splice(Fox.begin(), Bar, Bar.end(), Bar.end());
+        Fox.splice(Fox.cbegin(), Bar, Bar.cend(), Bar.cend());
         assert(Fox == "Fox" && Bar == "Bar");
     }
     {
         FOX BAR;
-        Fox.splice(++Fox.begin(), Bar, --Bar.end(), Bar.end());
+        Fox.splice(++Fox.cbegin(), Bar, --Bar.cend(), Bar.cend());
         assert(Fox == "Frox" && Bar == "Ba");
     }
     {
         FOX BAR;
-        Fox.splice(Fox.end(), Bar, Bar.begin(), ++Bar.begin());
+        Fox.splice(Fox.cend(), Bar, Bar.cbegin(), ++Bar.cbegin());
         assert(Fox == "FoxB" && Bar == "ar");
     }
 }

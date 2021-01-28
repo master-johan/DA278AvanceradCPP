@@ -32,8 +32,16 @@ int main() {
 	TestListIter();
 	new int(7);
 	std::cout << "There should be one memory leak!";
-	std::cin.get();
+	List<char> list1("Boo");
+	List<char> list2("KEEE");
 
+	list1 = list2;
+
+	std::cout << list1 << std::endl;
+	
+
+	std::cin.get();
+	
 }
 
 //template class List<int>;
