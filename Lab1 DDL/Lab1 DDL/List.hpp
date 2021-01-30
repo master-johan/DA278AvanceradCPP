@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdlib>
 #include <ostream>
+#include <iostream>
 #include <cassert>
 #define CHECK assert(Invariant());
 template <class T>
@@ -47,6 +48,12 @@ class List
 			_prev = _prev->_prev;
 			_prev->_next = this;
 			return static_cast<Node*>(temp);
+		}
+
+		void PointTowardsEachOther(Link* second)
+		{
+			this->_next = second;
+			second->_prev = this;
 		}
 
 	};
@@ -245,38 +252,20 @@ public:
 	}
 	void splice(const_iterator pos, List& other, const_iterator first, const_iterator last) // VG
 	{
-		bool thisEmpty = empty();
-		bool otherEmpty = other.empty();
-		if (thisEmpty&& otherEmpty)
+		if (first == last)
 		{
-			
-		}
-		else if (thisEmpty)
-		{
-			first._ptr->_prev->_next = last._ptr->_next;
-			last._ptr->_next->_prev = first._ptr->_prev;
-
-			pos._ptr->_next = first._ptr;
-			first._ptr->_prev = pos._ptr;
-			pos._ptr->_prev = last._ptr;
-			last._ptr->_next = pos._ptr;
-		}
-		else if (otherEmpty)
-		{
-
-		}
-		else
-		{
-			first._ptr->_prev->_next = last._ptr->_next->_prev;
-			last._ptr->_next->_prev = first._ptr->_prev->_next;
-
-			pos._ptr->_prev->_next = first._ptr;
-			first._ptr->_prev = pos._ptr->_prev;
-			last._ptr->_next = pos._ptr;
-			pos._ptr->_prev = last._ptr;
-
+			return;
 		}
 		
+		Link* beforePos = pos._ptr->_prev;
+		Link* beforeFirst = first._ptr->_prev;
+		Link* beforeLast = last._ptr->_prev;
+
+		beforePos->PointTowardsEachOther(first._ptr);
+		beforeFirst->PointTowardsEachOther(last._ptr);
+		first._ptr->PointTowardsEachOther(pos._ptr);
+
+
 		CHECK
 	}
 	void swap(List<T>& rhs)// VG

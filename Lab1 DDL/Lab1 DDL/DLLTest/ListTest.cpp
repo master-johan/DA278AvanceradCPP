@@ -336,14 +336,13 @@ void TestSpliceAndSwap()
     {
         FOX0 BAR;
         Fox.splice(Fox.cbegin(), Bar, Bar.cbegin(), Bar.cbegin());
-        cout << Fox << " " << Bar << "first done" << std::endl;
         Fox.splice(Fox.cbegin(), Bar, ++Bar.cbegin(), ++Bar.cbegin());
-        cout << Fox << " " << Bar << std::endl;
         assert(Fox == "" && Bar == "Bar");
     }
     {
         FOX0 BAR;
         Fox.splice(Fox.cbegin(), Bar, Bar.cbegin(), ++Bar.cbegin());
+        cout << Fox << " " << Bar << std::endl;
         assert(Fox == "B" && Bar == "ar");
     }
     {
