@@ -365,6 +365,12 @@ void TestSpliceAndSwap()
         Fox.splice(Fox.cend(), Bar, Bar.cbegin(), ++Bar.cbegin());
         assert(Fox == "FoxB" && Bar == "ar");
     }
+    {
+        FOX;
+        Fox.splice(Fox.cbegin(), Fox, ++Fox.cbegin(), Fox.cend());
+        cout << Fox << std::endl;
+        assert(Fox == "oxF");
+    }
 }
 
 

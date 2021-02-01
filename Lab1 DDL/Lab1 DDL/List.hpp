@@ -263,7 +263,7 @@ public:
 
 		beforePos->PointTowardsEachOther(first._ptr);
 		beforeFirst->PointTowardsEachOther(last._ptr);
-		first._ptr->PointTowardsEachOther(pos._ptr);
+		beforeLast->PointTowardsEachOther(pos._ptr);
 
 
 		CHECK
