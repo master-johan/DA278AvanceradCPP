@@ -58,6 +58,8 @@ void TestVector() {
     }
     {//check empty vecotors;
         Vector<char> v1;
+        assert(v1.capacity() == 0);
+        assert(v1.data() == nullptr);
         Vector<char> v2(v1);
         assert(v2 == "");
     }
@@ -116,6 +118,10 @@ void TestVector() {
         assert(Foo == "Bar");
         assert(Bar == "" || Bar == "Foo");
         assert(Bar == "");  //Vanliga resultatet men Foo är också okej
+        //assuming that we now have a nullptr in Bar
+        //we test that we can do a push_back;
+        Bar.push_back('x');
+        assert(Bar.capacity() > 0);
     }
 
     {//-	operator[](size_t i) som indexerar utan range check.
@@ -217,6 +223,11 @@ void TestVector() {
         Vector<char> Foo("Foo");
         swap(Bar, Foo);
         assert(Foo == "Bar" && Bar == "Foo");
+        //Test for efficient swap!
+        auto fptr = Foo.data();
+        auto bptr = Bar.data();
+        swap(Foo, Bar);
+        assert(fptr == Bar.data() && bptr == Foo.data());
     }
 
     TestRolOp();

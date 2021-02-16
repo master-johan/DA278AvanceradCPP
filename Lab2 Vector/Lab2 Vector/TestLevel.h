@@ -2,8 +2,7 @@
 
 #define LEVEL 99
 #define G
-#define VG
-
+//#define VG
 
 //Tanken är att man höjer Level successivt till 12
 //Sen kan man sätta level till 99
@@ -14,44 +13,53 @@
 /* Så här är nivåerna man kan sätta på LEVEL
 #if false
 level 1
-List();
-Count()
+Vector();
+size()
 Invariant();
 
 level 2
-List(char*);
-Print()
+Vector(char*);
+operator<<
 operator==
 
 level 3
 operator<, >= ,,, allihop
 
 level 4
-    List(const List&);
+    Vector(const Vector&);
+    operator=
 
 Level 5
-empty()
-front(och const)
-back(och const)
+operator[]
+at
 
 level 6
 push_back
-pop_back
 
 level 7
-push_front
-pop_front
+Move Constructor
+Move Assignment
+
+Level 8:
+reserve
+shrink_to_fit
+resize
+swap
+
+Level 9:
+data()
+typedefen testas inte!
 
 level 10
-ListIter(const Link* node = nullptr)
+VectorIter(const Link* node = nullptr)
 begin()
 end()
 operator==
 operator!=
 
 Level 11
-ListIter(const ListIter&)
-ListIter& operator=(const ListIter&)
+VectorIter(const VectorIter&)
+VectorIter& operator=(const VectorIter&)
 
 operator*()
 operator->()
@@ -64,4 +72,7 @@ operator--
 operator--(int)
 
 #endif
+
+Observera att reverse_iterator inte testas i Basic Test!
+
 */

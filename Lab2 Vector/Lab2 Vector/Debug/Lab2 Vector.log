@@ -1,0 +1,56 @@
+﻿  Lab2 Vector.cpp
+  VectBasicTest.cpp
+  VectIterTest.cpp
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29333\include\algorithm(7417,1): error C2678: binary '*': no operator found which takes a left-hand operand of type 'const _BidIt' (or there is no acceptable conversion)
+          with
+          [
+              _BidIt=Vector<char>::VectorItt<char,1>
+          ]
+C:\Projects\Avancerad C++\DA278AvanceradCPP\Lab2 Vector\Lab2 Vector\Vector.hpp(60,6): message : could be 'X &Vector<char>::VectorItt<X,1>::operator *(void)'
+          with
+          [
+              X=char
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29333\include\algorithm(7417,1): message : while trying to match the argument list '(const _BidIt)'
+          with
+          [
+              _BidIt=Vector<char>::VectorItt<char,1>
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29333\include\algorithm(7981): message : see reference to function template instantiation '_BidIt std::_Insertion_sort_unchecked<_BidIt,_Fn>(const _BidIt,const _BidIt,_Pr)' being compiled
+          with
+          [
+              _BidIt=Vector<char>::VectorItt<char,1>,
+              _Fn=std::less<void>,
+              _Pr=std::less<void>
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29333\include\algorithm(7996): message : see reference to function template instantiation 'void std::stable_sort<_BidIt,std::less<void>>(const _BidIt,const _BidIt,_Pr)' being compiled
+          with
+          [
+              _BidIt=Vector<char>::VectorItt<char,1>,
+              _Pr=std::less<void>
+          ]
+C:\Projects\Avancerad C++\DA278AvanceradCPP\Lab2 Vector\Lab2 Vector\VectIterTest.cpp(205): message : see reference to function template instantiation 'void std::stable_sort<Vector<char>::VectorItt<T,1>>(const _BidIt,const _BidIt)' being compiled
+          with
+          [
+              T=char,
+              _BidIt=Vector<char>::VectorItt<char,1>
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29333\include\algorithm(7417,17): error C2100: illegal indirection
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29333\include\algorithm(7419,1): error C2678: binary '*': no operator found which takes a left-hand operand of type 'const _BidIt' (or there is no acceptable conversion)
+          with
+          [
+              _BidIt=Vector<char>::VectorItt<char,1>
+          ]
+C:\Projects\Avancerad C++\DA278AvanceradCPP\Lab2 Vector\Lab2 Vector\Vector.hpp(60,6): message : could be 'X &Vector<char>::VectorItt<X,1>::operator *(void)'
+          with
+          [
+              X=char
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29333\include\algorithm(7419,1): message : while trying to match the argument list '(const _BidIt)'
+          with
+          [
+              _BidIt=Vector<char>::VectorItt<char,1>
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29333\include\algorithm(7419,17): error C2100: illegal indirection
+  VectorTest.cpp
+  Generating Code...

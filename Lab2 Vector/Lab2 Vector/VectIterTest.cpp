@@ -79,21 +79,21 @@ void TestIterForward() {
     assert(it[2] == 'r');
 }
 
-//void TestIterPartR() {
-//    Vector<char> s1("foobar");
-//    for (auto i = s1.rbegin(); i != s1.rend(); i++)
-//        cout << *i;
-//    cout << endl;
-//    s1 = "raboof";
-//    auto it = s1.rbegin();
-//    assert(*it == 'f');
-//
-//    assert(*(it++) == 'f' && *it == 'o');
-//    ++it;
-//    assert(*++it == 'b');
-//    assert(*(it + 1) == 'a');
-//    assert(it[2] == 'r');
-//}
+void TestIterPartR() {
+    Vector<char> s1("foobar");
+    for (auto i = s1.rbegin(); i != s1.rend(); i++)
+        cout << *i;
+    cout << endl;
+    s1 = "raboof";
+    auto it = s1.rbegin();
+    assert(*it == 'f');
+
+    assert(*(it++) == 'f' && *it == 'o');
+    ++it;
+    assert(*++it == 'b');
+    assert(*(it + 1) == 'a');
+    assert(it[2] == 'r');
+}
 
 void TestIterForwardC() {
     Vector<char> s1("foobar");
@@ -110,20 +110,20 @@ void TestIterForwardC() {
     assert(it[2] == 'r');
 }
 
-//void TestIterPartCR() {
-//    Vector<char> s1("foobar");
-//    for (auto i = s1.crbegin(); i != s1.crend(); ++i)
-//        cout << *i;
-//    cout << endl;
-//    s1 = "raboof";
-//    auto it = s1.crbegin();
-//    assert(*it == 'f');
-//    assert(*(it++) == 'f' && *it == 'o');
-//    ++it;
-//    assert(*++it == 'b');
-//    assert(*(it + 1) == 'a');
-//    assert(it[2] == 'r');
-//}
+void TestIterPartCR() {
+    Vector<char> s1("foobar");
+    for (auto i = s1.crbegin(); i != s1.crend(); ++i)
+        cout << *i;
+    cout << endl;
+    s1 = "raboof";
+    auto it = s1.crbegin();
+    assert(*it == 'f');
+    assert(*(it++) == 'f' && *it == 'o');
+    ++it;
+    assert(*++it == 'b');
+    assert(*(it + 1) == 'a');
+    assert(it[2] == 'r');
+}
 
 void TestIterPart1() {
 
@@ -149,11 +149,11 @@ void TestIterPart1() {
 
 
     TestIterForward();
-    //TestIterPartR();
+    TestIterPartR();
     Vector<char>::const_iterator cStr;
     //Vector<char>::const_reverse_iterator crStr;
     TestIterForwardC();
-    //TestIterPartCR();
+    TestIterPartCR();
 
     //Iteratorerna ska kunna göra:
     //-	*it, ++it, it++, (it+i), it[i], == och !=
