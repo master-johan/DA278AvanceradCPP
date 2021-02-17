@@ -101,7 +101,7 @@ void TestVector() {
         Vector<char> v1("foo"), v2("bar"), v3("hej");
         auto xxx = v1.data();
         v1 = v2;
-        assert(xxx == vec1.data());
+        assert(xxx == v1.data());
     }
 #endif
 

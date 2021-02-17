@@ -46,6 +46,7 @@ class Vector
 		VectorItt& operator= (const VectorItt& other)
 		{
 			_ptr = other._ptr;
+			return *this;
 		}
 
 		
@@ -57,7 +58,7 @@ class Vector
 
 #pragma region IttOperator
 
-		X& operator*()
+		X& operator*() const
 		{
 			return *_ptr;
 		}
@@ -69,7 +70,7 @@ class Vector
 
 		X& operator[](size_t i)
 		{
-			return *(_ptr + i);
+			return *(_ptr + (i*DIR));
 		}
 
 		VectorItt& operator++()
@@ -97,11 +98,11 @@ class Vector
 
 		VectorItt operator+(difference_type i) const
 		{
-			return _ptr + i;
+			return _ptr + (i *DIR);
 		}
 		VectorItt operator-(difference_type i) const
 		{
-			return _ptr - i;
+			return _ptr - (i * DIR);
 		}
 		difference_type operator-(const VectorItt& other)const
 		{
@@ -110,7 +111,8 @@ class Vector
 
 		VectorItt& operator+= (difference_type i)
 		{
-			return *_ptr +  i /*(DIR * i)*/;
+			operator+(i);
+			return *this;
 		}
 
 		VectorItt& operator-= (difference_type i)
@@ -171,8 +173,8 @@ public:
 	Vector() noexcept
 	{
 		_size = 0;
-		_capacity = 4; 
-		_pointer = new T[_capacity]; 
+		_capacity = 0; 
+		_pointer = nullptr; 
 
 		CHECK
 	}
@@ -221,10 +223,17 @@ public:
 #pragma region Operator
 	Vector& operator= (const Vector& other) // assignment 
 	{
-		_capacity = other._capacity;
+		if (*this == other)
+		{
+			return *this;
+		}
+		if (_capacity != other._capacity)
+		{
+			_capacity = other._capacity;
+			delete[] _pointer;
+			_pointer = new T[_capacity];
+		}
 		_size = other._size;
-		delete[] _pointer;
-		_pointer = new T[_capacity];
 
 		for (size_t i = 0; i < _size; i++)
 		{
@@ -263,11 +272,22 @@ public:
 	}
 	T& at(size_t i)
 	{
-		return _pointer[i];
+		if (i > 0 && i< _size)
+		{
+			return _pointer[i];
+		}
+
+		throw std::out_of_range("Index out for rage");
+
 	}
 	const T& at(size_t i) const
 	{
-		return _pointer[i];
+		if (i > 0 && i < _size)
+		{
+			return _pointer[i];
+		}
+
+		throw std::out_of_range("Index out for rage");
 	}
 	T* data() noexcept
 	{
@@ -310,29 +330,29 @@ public:
 
 	reverese_iterator rbegin() noexcept
 	{
-		return reverese_iterator(_pointer + _size);
+		return reverese_iterator(_pointer + _size -1);
 	}
 	reverese_iterator rend() noexcept
 	{
-		return reverese_iterator(_pointer);
+		return reverese_iterator(_pointer-1);
 	}
 	const_reverse_iterator rbegin() const noexcept
 	{
-		return const_reverse_iterator(_pointer + _size);
+		return const_reverse_iterator(_pointer + _size-1);
 	}
 	const_reverse_iterator crbegin() const noexcept
 	{
-		return const_reverse_iterator(_pointer + _size);
+		return const_reverse_iterator(_pointer + _size -1);
 
 	}
 	const_reverse_iterator rend() const noexcept
 	{
-		return const_reverse_iterator(_pointer);
+		return const_reverse_iterator(_pointer-1);
 
 	}
 	const_reverse_iterator crend() const noexcept
 	{
-		return const_reverse_iterator(_pointer);
+		return const_reverse_iterator(_pointer-1);
 	}
 #pragma endregion ReverseIterator
 	
@@ -352,7 +372,7 @@ public:
 
 	void reserve( size_t n)
 	{
-		if (n < _capacity)
+		if (n <= _capacity)
 		{
 			return;
 		}
@@ -390,7 +410,7 @@ public:
 	{
 		if (_size == _capacity)
 		{
-			reserve(_capacity * 2);
+			reserve(_capacity * 2 + 1);
 		}
 		_pointer[_size] = c;
 		++_size;

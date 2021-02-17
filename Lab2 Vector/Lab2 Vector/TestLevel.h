@@ -2,7 +2,7 @@
 
 #define LEVEL 99
 #define G
-//#define VG
+#define VGBETYG
 
 //Tanken är att man höjer Level successivt till 12
 //Sen kan man sätta level till 99
