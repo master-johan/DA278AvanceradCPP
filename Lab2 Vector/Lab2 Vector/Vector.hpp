@@ -35,8 +35,8 @@ class Vector
 			_ptr = nullptr;
 		}
 
-		VectorItt(X* p) : _ptr(static_cast<T*>(const_cast<T*>(p))){}
-	
+		VectorItt(X* p) : _ptr(static_cast<T*>(const_cast<T*>(p))) {}
+
 
 		VectorItt(const VectorItt& other)
 		{
@@ -49,10 +49,10 @@ class Vector
 			return *this;
 		}
 
-		
+
 		template<class Y, class = std::enable_if_t <!std::is_const_v <Y>>> //const_iterator(iterator&)
 		VectorItt(const VectorItt<Y, DIR>& rhs) : _ptr(rhs._ptr) {}
-		
+
 		template<class Y, class = std::enable_if_t <!std::is_const_v <Y>>>	//const_iterator& operator=(iterator&)
 		VectorItt& operator= (const VectorItt& other) { _ptr = other._ptr; return *this; }
 
@@ -70,18 +70,18 @@ class Vector
 
 		X& operator[](size_t i)
 		{
-			return *(_ptr + (i*DIR));
+			return *(_ptr + (i * DIR));
 		}
 
 		VectorItt& operator++()
 		{
 			_ptr += DIR;
-			return *this;	 
+			return *this;
 		}
 		VectorItt& operator--()
 		{
 			_ptr -= DIR;
-			return *this;	 
+			return *this;
 		}
 		VectorItt operator++(int)
 		{
@@ -98,7 +98,7 @@ class Vector
 
 		VectorItt operator+(difference_type i) const
 		{
-			return _ptr + (i *DIR);
+			return _ptr + (i * DIR);
 		}
 		VectorItt operator-(difference_type i) const
 		{
@@ -127,7 +127,7 @@ class Vector
 			else if (lhs._ptr > rhs._ptr)
 				return std::strong_ordering::greater;
 			//else if (lhs._ptr == rhs._ptr)
-				return std::strong_ordering::equivalent;
+			return std::strong_ordering::equivalent;
 
 		}
 		friend bool operator==(const VectorItt& lhs, const VectorItt& rhs)
@@ -139,7 +139,7 @@ class Vector
 			return (lhs <=> rhs) != 0;
 		}
 #pragma endregion IttOperator
-	
+
 	};
 #pragma endregion IteratorClass
 	/// <summary>
@@ -162,7 +162,7 @@ public:
 	using reverese_iterator = VectorItt<T, -1>;
 	using const_reverse_iterator = VectorItt<const T, -1>;
 #pragma endregion TypeDefs
-	
+
 #pragma region Constructor
 
 	~Vector()
@@ -173,15 +173,15 @@ public:
 	Vector() noexcept
 	{
 		_size = 0;
-		_capacity = 0; 
-		_pointer = nullptr; 
+		_capacity = 0;
+		_pointer = nullptr;
 
 		CHECK
 	}
 
 	Vector(const Vector& other) //copy
 	{
-		_size =  other._size;
+		_size = other._size;
 		_capacity = other._capacity;
 		_pointer = new T[_capacity];
 
@@ -209,7 +209,7 @@ public:
 		_size = 0;
 		_capacity = 4;
 		_pointer = new char[_capacity];
-		auto ptr = other; 
+		auto ptr = other;
 		while (*ptr != '\0')
 		{
 			push_back(*ptr);
@@ -260,7 +260,7 @@ public:
 		}
 
 		CHECK
-		return *this;
+			return *this;
 	}
 	T& operator[](size_t i)
 	{
@@ -272,7 +272,7 @@ public:
 	}
 	T& at(size_t i)
 	{
-		if (i > 0 && i< _size)
+		if (i > 0 && i < _size)
 		{
 			return _pointer[i];
 		}
@@ -330,32 +330,32 @@ public:
 
 	reverese_iterator rbegin() noexcept
 	{
-		return reverese_iterator(_pointer + _size -1);
+		return reverese_iterator(_pointer + _size - 1);
 	}
 	reverese_iterator rend() noexcept
 	{
-		return reverese_iterator(_pointer-1);
+		return reverese_iterator(_pointer - 1);
 	}
 	const_reverse_iterator rbegin() const noexcept
 	{
-		return const_reverse_iterator(_pointer + _size-1);
+		return const_reverse_iterator(_pointer + _size - 1);
 	}
 	const_reverse_iterator crbegin() const noexcept
 	{
-		return const_reverse_iterator(_pointer + _size -1);
+		return const_reverse_iterator(_pointer + _size - 1);
 
 	}
 	const_reverse_iterator rend() const noexcept
 	{
-		return const_reverse_iterator(_pointer-1);
+		return const_reverse_iterator(_pointer - 1);
 
 	}
 	const_reverse_iterator crend() const noexcept
 	{
-		return const_reverse_iterator(_pointer-1);
+		return const_reverse_iterator(_pointer - 1);
 	}
 #pragma endregion ReverseIterator
-	
+
 
 #pragma endregion Iterator
 
@@ -370,7 +370,7 @@ public:
 		return _capacity;
 	}
 
-	void reserve( size_t n)
+	void reserve(size_t n)
 	{
 		if (n <= _capacity)
 		{
@@ -380,7 +380,7 @@ public:
 		T* temp = new T[_capacity];
 
 		_copyToArray(temp);
-	
+
 		delete[] _pointer;
 		_pointer = temp;
 
@@ -402,8 +402,6 @@ public:
 		delete[] _pointer;
 		_pointer = temp;
 
-
-		//till skillnad från std så kräver vi att utrymmet krymps maximalt (size()==capacity())
 	}
 
 	void push_back(T c)
@@ -424,7 +422,7 @@ public:
 			reserve(n);
 		}
 
-		if (n>_size)
+		if (n > _size)
 		{
 			for (size_t i = _size; i < n; i++)
 			{
@@ -498,7 +496,7 @@ public:
 		for (size_t i = 0; i < other.size(); ++i)
 			cout << other[i];
 		return cout;
-	
+
 	}
 
 
@@ -511,7 +509,7 @@ public:
 		lhs._size = rhs._size;
 		lhs._capacity = rhs._capacity;
 		lhs._pointer = rhs._pointer;
-		
+
 		rhs._size = sizeTemp;
 		rhs._capacity = capacityTemp;
 		rhs._pointer = tempPointer;
