@@ -1,0 +1,14 @@
+﻿  Lab3 MetaProg.cpp
+C:\Projects\Avancerad C++\DA278AvanceradCPP\Lab3 MetaProg\Lab3 MetaProg\Sum.hpp(7,17): error C2672: 'std::begin': no matching overloaded function found
+C:\Projects\Avancerad C++\DA278AvanceradCPP\Lab3 MetaProg\Lab3 MetaProg\Lab3 MetaProg.cpp(83): message : see reference to function template instantiation 'auto Sum<std::vector<int,std::allocator<int>>>(const T &)' being compiled
+          with
+          [
+              T=std::vector<int,std::allocator<int>>
+          ]
+C:\Projects\Avancerad C++\DA278AvanceradCPP\Lab3 MetaProg\Lab3 MetaProg\Sum.hpp(7,1): error C2784: 'const _Elem *std::begin(std::initializer_list<_Elem>) noexcept': could not deduce template argument for 'std::initializer_list<_Elem>' from 'const T'
+          with
+          [
+              T=std::vector<int,std::allocator<int>>
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29333\include\initializer_list(57): message : see declaration of 'std::begin'
+C:\Projects\Avancerad C++\DA278AvanceradCPP\Lab3 MetaProg\Lab3 MetaProg\Sum.hpp(7,38): error C2672: 'std::begin': no matching overloaded function found

@@ -115,10 +115,7 @@ class Vector
 			return *this;
 		}
 
-		VectorItt& operator-= (difference_type i)
-		{
-			return *_ptr - (DIR * i);
-		}
+
 
 		friend auto operator<=>(const VectorItt& lhs, const VectorItt& rhs)
 		{
@@ -167,15 +164,12 @@ public:
 
 	~Vector()
 	{
+		CHECK
 		delete[] _pointer;
 	}
 
-	Vector() noexcept
+	Vector() noexcept : _size(0), _capacity(0), _pointer(nullptr) 
 	{
-		_size = 0;
-		_capacity = 0;
-		_pointer = nullptr;
-
 		CHECK
 	}
 
@@ -227,7 +221,7 @@ public:
 		{
 			return *this;
 		}
-		if (_capacity != other._capacity)
+		if (_capacity < other._size)
 		{
 			_capacity = other._capacity;
 			delete[] _pointer;
@@ -242,8 +236,7 @@ public:
 
 		CHECK
 
-
-		return *this;
+			return *this;
 	}
 	Vector& operator=(Vector&& other) noexcept
 	{
@@ -272,7 +265,7 @@ public:
 	}
 	T& at(size_t i)
 	{
-		if (i > 0 && i < _size)
+		if (i < _size)
 		{
 			return _pointer[i];
 		}
@@ -282,7 +275,7 @@ public:
 	}
 	const T& at(size_t i) const
 	{
-		if (i > 0 && i < _size)
+		if (i < _size)
 		{
 			return _pointer[i];
 		}
@@ -422,13 +415,11 @@ public:
 			reserve(n);
 		}
 
-		if (n > _size)
+		for (size_t i = _size; i < n; i++)
 		{
-			for (size_t i = _size; i < n; i++)
-			{
-				_pointer[i] = T();
-			}
+			_pointer[i] = T();
 		}
+
 		_size = n;
 
 		// Ändrar size() till n, om n>size() så fylls det på med T()
@@ -455,24 +446,31 @@ public:
 	}
 	friend bool operator ==(const Vector& lhs, const Vector& other)
 	{
+		if (lhs._size != other._size)
+		{
+			return false;
+		}
 		return (lhs <=> other) == 0;
 	}
 	friend bool operator !=(const Vector& lhs, const Vector& other)
 	{
+		if (lhs._size != other._size)
+		{
+			return true;
+		}
 		return (lhs <=> other) != 0;
 	}
 
 	bool Invariant() const
 	{
+		if (_capacity == 0)
+		{
+			if (_pointer != nullptr)
+			{
+				return false;
+			}
+		}
 
-		//if (_pointer == nullptr)
-		//{
-		//	if (_capacity != 0)
-		//	{
-		//		return false;
-		//	}
-		//}
-		//_size < _capacity
 
 		if (_size > _capacity)
 		{
