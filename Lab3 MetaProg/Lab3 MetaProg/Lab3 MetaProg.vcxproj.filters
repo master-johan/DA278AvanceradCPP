@@ -35,5 +35,8 @@
     <ClInclude Include="Sum.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SFINAE.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

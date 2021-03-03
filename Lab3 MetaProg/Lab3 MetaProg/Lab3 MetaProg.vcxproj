@@ -146,6 +146,7 @@
     <ClInclude Include="Ackermann.hpp" />
     <ClInclude Include="Add.hpp" />
     <ClInclude Include="RemAllConst.hpp" />
+    <ClInclude Include="SFINAE.hpp" />
     <ClInclude Include="Simplify.hpp" />
     <ClInclude Include="Sum.hpp" />
   </ItemGroup>

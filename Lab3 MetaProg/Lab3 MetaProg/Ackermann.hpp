@@ -17,3 +17,9 @@ struct Ackermann<0, n>
 {
 	static const int value = n + 1;
 };
+
+template <>
+struct Ackermann<0, 0>
+{
+	static const int value = 1;
+};
