@@ -1,0 +1,6 @@
+﻿  main.cpp
+C:\Projects\Avancerad C++\DA278AvanceradCPP\labb4 test\labb4 test\main.cpp(278,55): error C2440: 'initializing': cannot convert from 'unsigned int' to 'Threadpool'
+C:\Projects\Avancerad C++\DA278AvanceradCPP\labb4 test\labb4 test\main.cpp(278,55): message : No constructor could take the source type, or constructor overload resolution was ambiguous
+C:\Projects\Avancerad C++\DA278AvanceradCPP\labb4 test\labb4 test\main.cpp(327,37): error C2039: 'enqueue': is not a member of 'Threadpool'
+C:\Projects\Avancerad C++\DA278AvanceradCPP\labb4 test\labb4 test\threadpool.h(10): message : see declaration of 'Threadpool'
+C:\Projects\Avancerad C++\DA278AvanceradCPP\labb4 test\labb4 test\main.cpp(327,20): error C2672: 'std::vector<std::future<uint>,std::allocator<std::future<uint>>>::emplace_back': no matching overloaded function found
