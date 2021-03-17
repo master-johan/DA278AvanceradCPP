@@ -114,7 +114,7 @@ class Vector
 
 		VectorItt& operator+= (difference_type i)
 		{
-			operator+(i);
+			this->_ptr += (i * DIR);
 			return *this;
 		}
 
@@ -123,11 +123,11 @@ class Vector
 		friend auto operator<=>(const VectorItt& lhs, const VectorItt& rhs)
 		{
 			if (lhs._ptr < rhs._ptr)
-				return std::strong_ordering::less;
+				return -DIR;
 			else if (lhs._ptr > rhs._ptr)
-				return std::strong_ordering::greater;
+				return DIR;
 			//else if (lhs._ptr == rhs._ptr)
-			return std::strong_ordering::equivalent;
+			return 0;
 
 		}
 		friend bool operator==(const VectorItt& lhs, const VectorItt& rhs)
@@ -142,51 +142,62 @@ class Vector
 
 	};
 #pragma endregion IteratorClass
-	/// <summary>
-	/// Copy from _pointer to other
-	/// </summary>
-	/// <param name="other"></param>
-	void _copyToArray(T* other)
-	{
-		for (size_t i = 0; i < _size; i++)
-		{
-			other[i] = _pointer[i];
-		}
-	}
+
 
 public:
 
 #pragma region TypeDefs
 	using iterator = VectorItt<T, 1>;
 	using const_iterator = VectorItt<const T, 1>;
-	using reverese_iterator = VectorItt<T, -1>;
+	using reverse_iterator = VectorItt<T, -1>;
 	using const_reverse_iterator = VectorItt<const T, -1>;
+	using value_type = T;
+	using size_type = size_t;
+	using difference_type = ptrdiff_t;
+	using reference = T&;
+	using const_reference = const T&;
+	using pointer = T*;
+	using const_pointer = const T*;
 #pragma endregion TypeDefs
 
 #pragma region Constructor
 
 	~Vector() noexcept
 	{
-		CHECK // loopa igenom alla, sedan deallocate.
-		delete[] _pointer;
+		for (size_t i = 0; i < _size; ++i)
+		{
+			_pointer[i].~T();
+		}
+		_allocator.deallocate(_pointer, _capacity);
+		CHECK
+
 	}
 
-	Vector() noexcept : _size(0), _capacity(0), _pointer(nullptr) 
+	Vector() noexcept : _size(0), _capacity(0), _pointer(nullptr)
 	{
 		CHECK
 	}
 
 	Vector(const Vector& other) //copy
 	{
-		_size = other._size;
-		_capacity = other._capacity;
+		_size = 0;
+		_capacity = other._size;
 		_pointer = _allocator.allocate(_capacity);
 
-		for (size_t i = 0; i < _capacity; i++)
+		try
 		{
-			new(_pointer[i]) T(other._pointer[i])
-			//_pointer[i] = other._pointer[i];
+			for (; _size < other._size; ++_size)
+				new(_pointer + _size) T(other[_size]);
 		}
+		catch (const std::exception&)
+		{
+			for (--_size; _size < 0; --_size)
+				_pointer[_size]. ~T();
+
+			_allocator.deallocate(_pointer, _capacity);
+			throw;
+		}
+
 		CHECK
 	}
 
@@ -205,13 +216,21 @@ public:
 	Vector(const char* other)
 	{
 		_size = 0;
-		_capacity = 4;
-		_pointer = new char[_capacity];
+		_capacity = std::strlen(other);
+		_pointer = _allocator.allocate(_capacity);
 		auto ptr = other;
-		while (*ptr != '\0')
+		try
 		{
-			push_back(*ptr);
-			++ptr;
+			for (; ptr[_size] != '\0'; ++_size)
+				new(_pointer + _size) T(other[_size]);
+		}
+		catch (const std::exception&)
+		{
+			for (--_size; _size < 0; --_size)
+				_pointer[_size]. ~T();
+
+			_allocator.deallocate(_pointer, _capacity);
+			throw;
 		}
 		CHECK
 
@@ -221,7 +240,7 @@ public:
 #pragma region Operator
 	Vector& operator= (const Vector& other) // assignment 
 	{
-		if (*this == other)
+		if (this == &other)
 		{
 			return *this;
 		}
@@ -246,10 +265,11 @@ public:
 	{
 		if (this != &other)
 		{
-			delete[] _pointer;
+			this->~Vector();
 			_capacity = other._capacity;
 			_size = other._size;
 			_pointer = other._pointer;
+
 
 			other._capacity = 0;
 			other._size = 0;
@@ -325,13 +345,13 @@ public:
 
 #pragma region ReverseIterator
 
-	reverese_iterator rbegin() noexcept
+	reverse_iterator rbegin() noexcept
 	{
-		return reverese_iterator(_pointer + _size - 1);
+		return reverse_iterator(_pointer + _size - 1);
 	}
-	reverese_iterator rend() noexcept
+	reverse_iterator rend() noexcept
 	{
-		return reverese_iterator(_pointer - 1);
+		return reverse_iterator(_pointer - 1);
 	}
 	const_reverse_iterator rbegin() const noexcept
 	{
@@ -373,16 +393,36 @@ public:
 		{
 			return;
 		}
-		_capacity = n;
-		T* temp = _allocator.allocate(_capacity);
-
-		_copyToArray(temp);
-		for (size_t i = 0; i < _size; ++i)
+		if (_pointer == nullptr)
 		{
-			_pointer[i].~T();
+			_pointer = _allocator.allocate(n);
 		}
-		_allocator.deallocate(_pointer,_capacity);
-		_pointer = temp;
+		else
+		{
+			T* temp = _allocator.allocate(n);
+			size_t i = 0;
+			try
+			{
+				for (; i < _size; ++i)
+				{
+					new(temp + i) T(_pointer[i]);
+					_pointer[i].~T();
+				}
+				_allocator.deallocate(_pointer, _capacity);
+				_pointer = temp;
+			}
+			catch (const std::exception&)
+			{
+				for (; i != 0; --i)
+				{
+					temp[i].~T();
+				}
+				_allocator.deallocate(temp, n);
+				throw;
+			}
+
+		}
+		_capacity = n;
 
 		CHECK
 	}
@@ -394,25 +434,62 @@ public:
 			return;
 		}
 
-		T* temp = new T[_size];
+		T* temp = _allocator.allocate(_size);
+
+		for (size_t i = 0; i < _size; ++i)
+		{
+			new(temp + i) T(_pointer[i]);
+		}
+
+		this->~Vector();
 		_capacity = _size;
-
-		_copyToArray(temp);
-
-		delete[] _pointer;
 		_pointer = temp;
 
 	}
 
-	void push_back(T c)
+	void push_back(const T& c)
 	{
 		if (_size == _capacity)
 		{
 			reserve(_capacity * 2 + 1);
 		}
-		
-		_pointer[_size] = c;
+
+
+		new(_pointer + _size) T(c);
 		++_size;
+
+		/*try
+		{
+			new(_pointer + _size) T(c);
+			++_size;
+
+		}
+		catch (const std::exception&)
+		{
+			throw;
+		}*/
+	}
+
+	void push_back(T&& c)
+	{
+		if (_size == _capacity)
+		{
+			reserve(_capacity * 2 + 1);
+		}
+
+		new(_pointer + _size) T(std::move(c));
+		++_size;
+
+		//try
+		//{
+		//	new(_pointer + _size) T(std::move(c));
+		//	++_size;
+
+		//}
+		//catch (const std::exception&)
+		//{
+		//	throw;
+		//}
 	}
 
 	void resize(size_t n)
@@ -425,7 +502,7 @@ public:
 
 		for (size_t i = _size; i < n; i++)
 		{
-			_pointer[i] = T();
+			new(_pointer + i) T();
 		}
 
 		_size = n;
