@@ -295,16 +295,16 @@ void TestVGAssignment() {
         assert(Bar2 == Foo && Foo == Bar && Bar == "Bar");
     }
     {
-        Vector<Dhelper> Bar("Bar");
-        Vector<Dhelper> Foo("Foo");
-        auto Bar2 = Foo.AssFast(Bar);
-        assert(Bar2 == Foo && Foo == Bar && Bar == "Bar");
-    }
-    {
-        Vector<Dhelper> Bar("Bar");
-        Vector<Dhelper> Foo("Foo");
-        auto Bar2 = Foo.AssStrong(Bar);
-        assert(Bar2 == Foo && Foo == Bar && Bar == "Bar");
+    //    Vector<Dhelper> Bar("Bar");
+    //    Vector<Dhelper> Foo("Foo");
+    //    auto Bar2 = Foo.AssFast(Bar);
+    //    assert(Bar2 == Foo && Foo == Bar && Bar == "Bar");
+    //}
+    //{
+    //    Vector<Dhelper> Bar("Bar");
+    //    Vector<Dhelper> Foo("Foo");
+    //    auto Bar2 = Foo.AssStrong(Bar);
+    //    assert(Bar2 == Foo && Foo == Bar && Bar == "Bar");
     }
 }
 #endif
