@@ -109,7 +109,7 @@ class Vector
 		}
 		difference_type operator-(const VectorItt& other)const
 		{
-			return _ptr - other._ptr;
+			return (_ptr - other._ptr) * DIR;
 		}
 
 		VectorItt& operator+= (difference_type i)
@@ -126,7 +126,6 @@ class Vector
 				return -DIR;
 			else if (lhs._ptr > rhs._ptr)
 				return DIR;
-			//else if (lhs._ptr == rhs._ptr)
 			return 0;
 
 		}
@@ -240,53 +239,49 @@ public:
 #pragma region Operator
 	Vector& operator= (const Vector& other) // assignment 
 	{
-		//return (AssFast(other));
+		return (AssFast(other));
+	}
+
+	Vector& AssSimple(Vector other)
+	{
+		swap(*this, other);
+		return *this;
+	}
+	Vector& AssFast(const Vector& other)
+	{
 		if (this == &other)
 		{
 			return *this;
 		}
 		if (_capacity < other._size)
 		{
-			for (size_t i = 0; i < _size; ++i)
+			Vector temp(other);
+			*this = std::move(temp);
+		}
+		else
+		{
+			const size_t smallsetSize = std::min(_size, other._size);
+			const size_t oldSize = _size;
+			for (size_t i = 0; i < smallsetSize; ++i) // mellan 0 och smallestsize gör vi en tilldelning rakt över
+			{
+				_pointer[i] = other[i];
+			}
+			for (; _size < other._size; ++_size)// mellan _size och other._size är det raw memory och nya objekt måste skapas
+			{
+				new(_pointer + _size) T(other[_size]);
+			}
+			for (size_t i = other._size; i < _size; i++) // ska objekt tas bort
 			{
 				_pointer[i].~T();
 			}
-			_allocator.deallocate(_pointer, _capacity); //delete[] _pointer;
-			_capacity = other._capacity;
-			_pointer = _allocator.allocate(_capacity); //_pointer = new T[_capacity];
+			_size = other._size;
 		}
-
-
-		for (_size = 0; _size < other._size; ++_size)
-		{
-			new(_pointer + _size) T(other[_size]); //_pointer[i] = other._pointer[i];
-		}
-
-		CHECK
-
-			return *this;
-	}
-
-	Vector& AssSimple(const Vector& other)
-	{
-		//if (this == &other)
-		//{
-		//	return *this;
-		//}
-		//_pointer = &other._pointer;
-		////_pointer = other._pointer;
-		//_size = other._size;
-		//_capacity = other._capacity;
 		return *this;
-
 	}
-	Vector& AssFast(const Vector& other)
+	Vector& AssStrong(Vector other)
 	{
-
-	}
-	Vector& AssStrong(const Vector& other)
-	{
-
+		swap(*this, other);
+		return *this;
 	}
 
 
@@ -431,26 +426,14 @@ public:
 		{
 			T* temp = _allocator.allocate(n);
 			size_t i = 0;
-			try
-			{
-				for (; i < _size; ++i)
-				{
-					new(temp + i) T(_pointer[i]);
-					_pointer[i].~T();
-				}
-				_allocator.deallocate(_pointer, _capacity);
-				_pointer = temp;
-			}
-			catch (const std::exception&)
-			{
-				for (; i != 0; --i)
-				{
-					temp[i].~T();
-				}
-				_allocator.deallocate(temp, n);
-				throw;
-			}
 
+			for (; i < _size; ++i)
+			{
+				new(temp + i) T(std::move(_pointer[i]));
+				_pointer[i].~T();
+			}
+			_allocator.deallocate(_pointer, _capacity);
+			_pointer = temp;
 		}
 		_capacity = n;
 
@@ -466,28 +449,15 @@ public:
 
 		T* temp = _allocator.allocate(_size);
 		size_t i = 0;
-		try
-		{
 
-			for (; i < _size; ++i)
-			{
-				new(temp + i) T(_pointer[i]);
-			}
-
-			this->~Vector();
-			_capacity = _size;
-			_pointer = temp;
-		}
-		catch (const std::exception&)
+		for (; i < _size; ++i)
 		{
-			for (; i != 0; --i)
-			{
-				temp[i].~T();
-			}
-			_allocator.deallocate(temp, _size);
-			throw;
+			new(temp + i) T(std::move(_pointer[i]));
 		}
 
+		this->~Vector();
+		_capacity = _size;
+		_pointer = temp;
 	}
 
 	void push_back(const T& c) // strong
@@ -496,21 +466,8 @@ public:
 		{
 			reserve(_capacity * 2 + 1);
 		}
-
-
 		new(_pointer + _size) T(c);
 		++_size;
-
-		/*try
-		{
-			new(_pointer + _size) T(c);
-			++_size;
-
-		}
-		catch (const std::exception&)
-		{
-			throw;
-		}*/
 	}
 
 	void push_back(T&& c) // strong
@@ -519,36 +476,24 @@ public:
 		{
 			reserve(_capacity * 2 + 1);
 		}
-
 		new(_pointer + _size) T(std::move(c));
 		++_size;
-
-		//try
-		//{
-		//	new(_pointer + _size) T(std::move(c));
-		//	++_size;
-
-		//}
-		//catch (const std::exception&)
-		//{
-		//	throw;
-		//}
 	}
 
 	void resize(size_t n)
 	{
 		if (n < _size)
 		{
-			for (size_t i = _size; i == n; --i)
+			for (size_t i = n; i < _size; ++i)
 			{
 				_pointer[i].~T();
 			}
+			_size = n;
 		}
 		if (n > _capacity)
 		{
 			reserve(n);
 		}
-
 		for (; _size < n; _size++)
 		{
 			new(_pointer + _size) T();
@@ -603,22 +548,17 @@ public:
 				return false;
 			}
 		}
-
-
+		if (_capacity > 0)
+		{
+			if (_pointer == nullptr)
+			{
+				return false;
+			}
+		}
 		if (_size > _capacity)
 		{
 			return false;
 		}
-
-		//for (size_t i = 0; i < _size; i++)
-		//{
-		//	if (_pointer[i] == nullptr)
-		//	{
-		//		return false;
-		//	}
-		//}
-
-
 		return true;
 	}
 
@@ -646,25 +586,15 @@ public:
 		rhs._pointer = tempPointer;
 	}
 
-	template<class... Args> 
+	template<class... Args>
 	reference emplace_back(Args&&... args) // strong
 	{
 		if (_size == _capacity)
 		{
 			reserve(2 * _capacity + 1);
 		}
-
-		try
-		{
-			new(_pointer + _size++) T(std::forward<Args>(args)...);
-
-		}
-		catch (const std::exception&)
-		{
-			--_size;
-			throw;
-		}
-
+		new(_pointer + _size) T(std::forward<Args>(args)...);
+		_size++;
 		return _pointer[_size - 1];
 	}
 #pragma endregion GlobalFunctions

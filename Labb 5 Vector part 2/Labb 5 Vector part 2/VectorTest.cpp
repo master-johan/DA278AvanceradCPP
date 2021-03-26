@@ -228,7 +228,9 @@ void TestVector() {
         assert(buf != vecBar.data() && vecBar.capacity() >= 6 && vecBar.size() == 6);
         buf = vecBar.data();
         vecBar.resize(5);
-        assert(buf == vecBar.data() && vecBar.capacity() >= 6 && vecBar.size() == 5);
+        assert(buf == vecBar.data());
+        assert(vecBar.capacity() >= 6);
+        assert(vecBar.size() == 5);
     }
     {//minitest push_back &&
         Vector<Dhelper> vecBar("Bar");
@@ -292,19 +294,22 @@ void TestVGAssignment() {
         Vector<Dhelper> Bar("Bar");
         Vector<Dhelper> Foo("Foo");
         auto Bar2 = Foo.AssSimple(Bar);
+        //assert(Bar2 == Foo && Foo == Bar && Bar == "Bar");
+        assert(Bar2 == Foo);
+        assert(Foo == Bar);
+        assert(Bar == "Bar");
+    }
+    {
+        Vector<Dhelper> Bar("Bar");
+        Vector<Dhelper> Foo("Foo");
+        auto Bar2 = Foo.AssFast(Bar);
         assert(Bar2 == Foo && Foo == Bar && Bar == "Bar");
     }
     {
-    //    Vector<Dhelper> Bar("Bar");
-    //    Vector<Dhelper> Foo("Foo");
-    //    auto Bar2 = Foo.AssFast(Bar);
-    //    assert(Bar2 == Foo && Foo == Bar && Bar == "Bar");
-    //}
-    //{
-    //    Vector<Dhelper> Bar("Bar");
-    //    Vector<Dhelper> Foo("Foo");
-    //    auto Bar2 = Foo.AssStrong(Bar);
-    //    assert(Bar2 == Foo && Foo == Bar && Bar == "Bar");
+        Vector<Dhelper> Bar("Bar");
+        Vector<Dhelper> Foo("Foo");
+        auto Bar2 = Foo.AssStrong(Bar);
+        assert(Bar2 == Foo && Foo == Bar && Bar == "Bar");
     }
 }
 #endif
